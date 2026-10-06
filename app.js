@@ -20,7 +20,7 @@ function validate(data) {
   });
 }
 let demoMode = false, originalTasks = null, storageBlocked = false;
-function persist(next, recovery=false) { if(demoMode) { notify('예시 모드를 종료한 뒤 내 계획을 저장하세요.'); return false; } if(storageBlocked && !recovery) { notify('기존 데이터를 읽을 수 없어 저장을 중단했습니다. 백업을 내려받아 확인하세요.'); return false; } try { localStorage.setItem(KEY,JSON.stringify(next)); tasks = next; storageBlocked=false; render(); return true; } catch { notify('저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인하세요.'); return false; } }
+function persist(next, recovery=false) { if(demoMode) { notify('예시 모드를 종료한 뒤 내 계획을 저장하세요.'); return false; } if(storageBlocked && !recovery) { notify('기존 데이터를 읽을 수 없어 저장을 중단했습니다. 백업을 내려받아 확인하세요.'); return false; } try { const previous=tasks; localStorage.setItem(KEY,JSON.stringify(next)); tasks = next; storageBlocked=false; render(); if(window.CloudSync?.user && !recovery) window.CloudSync.save(next,previous); return true; } catch { notify('저장하지 못했습니다. 브라우저 저장 공간과 설정을 확인하세요.'); return false; } }
 try { tasks = validate(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch { storageBlocked = true; notify('저장된 데이터를 읽을 수 없습니다. 기존 저장 내용은 덮어쓰지 않았습니다. 백업을 확인하세요.'); }
 function filtered() { const query = $('search').value.trim().toLocaleLowerCase(); return tasks.filter(t => ($('category').value === 'all' || t.category === $('category').value) && (!query || [t.company,t.project,t.title].some(s => s.toLocaleLowerCase().includes(query)))).sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time) || a.title.localeCompare(b.title)); }
 function element(tag,className,text) { const node=document.createElement(tag); if(className) node.className=className; if(text !== undefined) node.textContent=text; return node; }
@@ -117,3 +117,47 @@ $('open-review').onclick=()=>{const company=$('dashboard-company').value,period=
 $('demo').onclick=()=>{if(demoMode){tasks=originalTasks;originalTasks=null;demoMode=false;}else{originalTasks=tasks;demoMode=true;const date=today(),monthDate=date.slice(0,7);tasks=[['A회사 서버 정기점검','company','A회사','done','09:30','서버 상태와 백업을 확인했습니다.'],['A회사 점검 결과 정리','company','A회사','done','11:00','점검 결과 전달 완료. 다음 점검에서 남은 이슈를 확인합니다.'],['제안서 수정 및 전달','company','A회사','progress','14:00','고객 의견을 반영하고 있습니다.'],['운동 30분','personal','','planned','19:00','']].map((row,i)=>({id:'demo-'+i,title:row[0],category:row[1],company:row[2],status:row[3],time:row[4],notes:row[5],date,kind:'todo',project:row[1]==='company'?'기술 지원':''}));tasks.push({id:'demo-future',title:'가족 일정',category:'personal',company:'',status:'planned',time:'',notes:'',date:monthDate+'-24',kind:'event',project:''});$('day').value=date;month=new Date(new Date().getFullYear(),new Date().getMonth(),1);$('dashboard-review-month').value=date.slice(0,7);}$('demo-label').hidden=!demoMode;$('demo').textContent=demoMode?'내 기록으로 돌아가기':'예시 둘러보기';$('export').disabled=demoMode;$('import').disabled=demoMode;render();};
 $('dashboard-review-month').value=today().slice(0,7);
 $('day').value=today(); $('review-start').value=localDate(month); $('review-end').value=localDate(new Date(month.getFullYear(),month.getMonth()+1,0)); switchView('dashboard');
+
+let signedInUser = null;
+function updateSyncUI(configured,user,pending=false,cached=false) {
+  signedInUser=user;
+  $('sync-dot').classList.toggle('online',Boolean(user));
+  $('sync-title').firstChild.textContent=user?'동기화 계정':'로컬 저장 중';
+  $('sync-detail').textContent=user?(pending?'변경사항 전송 중':cached?'오프라인 · 연결 시 동기화':user.email):(configured?'로그인하면 기기 간 동기화':'Firebase 연결 전입니다');
+  $('account').textContent=user?'로그아웃':'계정 연결';
+  $('footer-sync').textContent=user?(cached?'오프라인 저장 중입니다. 연결되면 자동 동기화됩니다.':'PC와 휴대폰에 동기화됩니다.'):'이 기기에만 저장 중입니다.';
+}
+window.addEventListener('forest-auth',event=>{
+  const previous=signedInUser,user=event.detail.user;
+  if(previous&&!user){tasks=[];localStorage.removeItem(KEY);render();}
+  updateSyncUI(event.detail.configured,user);
+});
+window.addEventListener('forest-cloud-tasks',event=>{
+  if(!signedInUser)return;
+  try {
+    const incoming=validate(event.detail.items);
+    if(demoMode) originalTasks=incoming; else tasks=incoming;
+    localStorage.setItem(KEY,JSON.stringify(incoming));
+    updateSyncUI(true,signedInUser,event.detail.pending,event.detail.cached);
+    render();
+  } catch { notify('동기화된 데이터 형식을 확인할 수 없습니다. 기존 기록을 유지합니다.'); }
+});
+window.addEventListener('forest-sync-message',event=>notify(event.detail));
+window.addEventListener('forest-sync-error',event=>notify(event.detail));
+$('account').onclick=async()=>{
+  if(signedInUser){if(confirm('이 기기에서 로그아웃할까요? 클라우드 기록은 삭제되지 않습니다.'))await CloudSync.signOut();return;}
+  if(!window.CloudSync?.configured){notify('Firebase 프로젝트 연결이 필요합니다. 설정 후 로그인할 수 있습니다.');return;}
+  $('login-error').textContent='';$('login-dialog').showModal();
+};
+$('login-close').onclick=()=>$('login-dialog').close();
+async function authenticate(mode){
+  const email=$('login-email').value.trim(),password=$('login-password').value,error=$('login-error');
+  if(!$('login-form').reportValidity())return;
+  error.textContent='';
+  try{await CloudSync[mode](email,password);$('login-dialog').close();$('login-form').reset();notify(mode==='signUp'?'계정을 만들고 동기화를 시작했습니다.':'로그인했습니다.');}
+  catch(problem){error.textContent=CloudSync.friendlyError(problem);}
+}
+$('login-form').onsubmit=event=>{event.preventDefault();authenticate('signIn');};
+$('signup').onclick=()=>authenticate('signUp');
+if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.CloudSync?.start(()=>tasks);

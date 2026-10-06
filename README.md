@@ -37,6 +37,21 @@ gradle assembleDebug
 
 디버그 APK는 개발·직접 설치용입니다. Play Store 배포에는 별도의 비공개 서명 키로 release APK 또는 AAB를 생성해야 합니다.
 
+## 무료 PC·Android 동기화 설정
+
+이 저장소는 GitHub Pages, Firebase Authentication, Cloud Firestore를 이용하는 개인용 동기화 구조를 포함합니다. 결제수단을 연결하지 않은 Firebase Spark 요금제를 사용하면 무료 한도를 넘었을 때 과금되지 않습니다.
+
+1. Firebase Console에서 프로젝트를 만들고 Spark 요금제를 유지합니다.
+2. Authentication에서 이메일/비밀번호 로그인을 활성화합니다.
+3. Firestore Database를 만든 뒤 `firestore.rules` 내용을 Rules에 게시합니다. 테스트 모드 규칙을 유지하지 마세요.
+4. 프로젝트 설정에서 웹 앱을 추가하고 공개 Firebase 구성 객체를 `firebase-config.js`에 입력합니다. 관리자 SDK 키나 서비스 계정 파일은 넣지 마세요.
+5. Authentication의 승인된 도메인에 `lamprey15.github.io`가 없으면 추가합니다.
+6. `main`에 푸시하면 GitHub Actions가 Pages를 배포합니다. 처음 한 번은 저장소 Settings → Pages에서 GitHub Actions를 배포 소스로 허용해야 할 수 있습니다.
+
+PC에서는 배포 주소를 Chrome 또는 Edge로 연 뒤 메뉴의 **앱 설치**를 사용합니다. Android APK는 같은 배포 주소를 열기 때문에 웹 파일 패치는 PC와 Android에 함께 반영됩니다. Android 네이티브 권한이나 앱 아이콘을 바꾼 경우에만 APK를 다시 설치해야 합니다.
+
+처음 로그인한 계정에는 현재 기기의 로컬 계획을 한 번 업로드합니다. 이후 각 일정은 사용자별 Firestore 문서로 저장되며 다른 일정의 동시 편집은 서로 덮어쓰지 않습니다. 같은 일정을 두 기기에서 동시에 편집하면 Firestore에 마지막으로 도착한 저장이 반영됩니다. Firestore 오프라인 캐시가 변경을 보관하고 연결 복구 시 전송합니다.
+
 ## 대시보드와 리뷰
 
 - 대시보드에 월간 달력, 선택한 날의 할 일, 실제 기록 기반 진행률이 표시됩니다. 달력에서 날짜를 누르면 일별 계획을 엽니다.

@@ -19,7 +19,7 @@ def generatedWebAssets = layout.buildDirectory.dir("generated/webAssets")
 
 tasks.register("syncWebAssets", Copy) {
     from(rootProject.projectDir.parentFile) {
-        include "index.html", "style.css", "app.js"
+        include "index.html", "style.css", "app.js", "sync.js", "firebase-config.js", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "sw.js"
     }
     into(generatedWebAssets)
 }

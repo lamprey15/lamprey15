@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -17,6 +19,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
+    private static final String APP_URL = "https://lamprey15.github.io/lamprey15/";
+    private static final String APP_HOST = "lamprey15.github.io";
     private static final int PICK_FILE = 101;
     private static final int SAVE_BACKUP = 102;
     private WebView webView;
@@ -39,7 +43,26 @@ public class MainActivity extends Activity {
         settings.setDisplayZoomControls(false);
 
         webView.addJavascriptInterface(new AndroidBridge(), "AndroidBridge");
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            private boolean fallbackLoaded = false;
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                if (APP_HOST.equals(uri.getHost()) || "file".equals(uri.getScheme())) return false;
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                return true;
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (request.isForMainFrame() && !fallbackLoaded) {
+                    fallbackLoaded = true;
+                    view.loadUrl("file:///android_asset/index.html");
+                    Toast.makeText(MainActivity.this, "오프라인 버전을 열었습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
@@ -58,7 +81,7 @@ public class MainActivity extends Activity {
         });
 
         if (savedInstanceState == null) {
-            webView.loadUrl("file:///android_asset/index.html");
+            webView.loadUrl(APP_URL);
         } else {
             webView.restoreState(savedInstanceState);
         }
