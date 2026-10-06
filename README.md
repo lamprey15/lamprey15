@@ -24,6 +24,19 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 배포 파일은 `index.html`, `style.css`, `app.js`이며 빌드 과정은 없습니다. 저장소는 GitHub Pages 소스 공개 범위를 따릅니다. 앱에 입력한 기록은 브라우저에 저장되며 GitHub로 전송하지 않습니다.
 
+## Android APK
+
+`android` 프로젝트는 웹 앱 파일을 APK 안에 포함합니다. 앱은 인터넷 권한을 요청하지 않으며 기록은 Android WebView의 앱 전용 저장 공간에 보관됩니다. 앱 삭제 또는 앱 데이터 삭제 시 기록도 제거되므로 JSON 백업을 사용하세요.
+
+Android SDK 35와 JDK 17 이상이 준비된 환경에서 다음 명령으로 빌드합니다.
+
+```sh
+cd /workspace/lamprey15/android
+gradle assembleDebug
+```
+
+디버그 APK는 개발·직접 설치용입니다. Play Store 배포에는 별도의 비공개 서명 키로 release APK 또는 AAB를 생성해야 합니다.
+
 ## 대시보드와 리뷰
 
 - 대시보드에 월간 달력, 선택한 날의 할 일, 실제 기록 기반 진행률이 표시됩니다. 달력에서 날짜를 누르면 일별 계획을 엽니다.

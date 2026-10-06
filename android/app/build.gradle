@@ -1,0 +1,28 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "com.lamprey15.forestplanner"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.lamprey15.forestplanner"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0.0"
+    }
+}
+
+def generatedWebAssets = layout.buildDirectory.dir("generated/webAssets")
+
+tasks.register("syncWebAssets", Copy) {
+    from(rootProject.projectDir.parentFile) {
+        include "index.html", "style.css", "app.js"
+    }
+    into(generatedWebAssets)
+}
+
+android.sourceSets.main.assets.srcDir(generatedWebAssets)
+tasks.named("preBuild").configure { dependsOn("syncWebAssets") }
