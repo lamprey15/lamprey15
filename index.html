@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#285b49">
+  <title>하루모아 · 계획과 기록</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <a class="brand" href="./">하루모아<span>PLAN & RECORD</span></a>
+      <p class="aside-note">작은 계획을 모아<br>나의 흐름을 만들어요.</p>
+      <nav aria-label="화면 선택">
+        <button class="nav active" data-view="day">◷ <span>하루 계획</span></button>
+        <button class="nav" data-view="month">▦ <span>월간 달력</span></button>
+        <button class="nav" data-view="review">≡ <span>모아보기 · 리뷰</span></button>
+      </nav>
+      <div class="storage"><strong>내 브라우저에 저장</strong><p>다른 기기로 옮기거나 데이터를 보관하려면 백업을 내려받으세요.</p><button id="export">백업 다운로드 ↓</button><label class="import">백업 가져오기<input id="import" type="file" accept="application/json,.json"></label></div>
+    </aside>
+    <main>
+      <header><div><p class="eyebrow">YOUR EVERYDAY, ORGANIZED</p><h1 id="heading">하루 계획</h1><p id="subtitle">오늘의 할 일과 약속을 한곳에서.</p></div><button class="primary" id="add">＋ 새 계획</button></header>
+      <section class="filters" aria-label="계획 필터"><label>구분<select id="category"><option value="all">전체 일정</option><option value="company">회사</option><option value="personal">개인</option></select></label><label>회사 · 프로젝트<input id="search" type="search" placeholder="예: A회사, 홈페이지"></label><button id="today">오늘로 이동</button></section>
+      <section id="day-view">
+        <div class="section-heading"><div><p class="eyebrow">DAILY PLAN</p><h2 id="day-title"></h2></div><input id="day" type="date" aria-label="계획 날짜"></div>
+        <div class="stats" id="stats"></div><div id="day-list" class="task-list"></div>
+      </section>
+      <section id="month-view" hidden>
+        <div class="section-heading"><div><p class="eyebrow">A MONTH AT A GLANCE</p><h2 id="month-title"></h2></div><div class="month-controls"><button id="previous" aria-label="이전 달">←</button><button id="next" aria-label="다음 달">→</button></div></div>
+        <div class="calendar-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="calendar" id="calendar"></div>
+      </section>
+      <section id="review-view" hidden>
+        <div class="section-heading"><div><p class="eyebrow">LOOK BACK, MOVE FORWARD</p><h2>기록을 모아 다음 계획으로</h2></div></div>
+        <div class="review-controls"><label>시작일<input id="review-start" type="date"></label><label>종료일<input id="review-end" type="date"></label><button id="copy-review">리뷰 복사</button></div>
+        <div id="review-summary" class="review-summary"></div><div id="review-list" class="task-list"></div>
+      </section>
+      <footer>하루모아 · 기록은 이 브라우저에만 보관됩니다. 동기화와 알림은 지원하지 않습니다.</footer>
+    </main>
+  </div>
+  <dialog id="editor"><form id="task-form"><div class="dialog-heading"><h2 id="form-title">새 계획</h2><button type="button" id="close" aria-label="닫기">✕</button></div>
+    <label>제목<input id="title" maxlength="150" required placeholder="어떤 계획을 세우고 싶나요?"></label>
+    <div class="form-grid"><label>구분<select id="task-category"><option value="company">회사</option><option value="personal">개인</option></select></label><label>종류<select id="kind"><option value="todo">할 일</option><option value="event">일정</option></select></label></div>
+    <div class="form-grid"><label>날짜<input id="date" type="date" required></label><label>시간 · 선택<input id="time" type="time"></label></div>
+    <div class="form-grid"><label>회사 · 선택<input id="company" maxlength="80" placeholder="예: A회사"></label><label>프로젝트 · 선택<input id="project" maxlength="80" placeholder="예: 홈페이지 개편"></label></div>
+    <label>상태<select id="status"><option value="planned">예정</option><option value="progress">진행 중</option><option value="done">완료</option></select></label>
+    <label>결과 · 메모<textarea id="notes" maxlength="5000" rows="4" placeholder="진행 내용, 결과와 다음 할 일을 남겨보세요."></textarea></label>
+    <div class="form-actions"><button type="button" class="danger" id="delete" hidden>삭제</button><button type="submit" class="primary">저장하기</button></div>
+  </form></dialog>
+  <div id="notice" role="status" aria-live="polite"></div>
+</body>
+</html>
