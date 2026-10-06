@@ -48,14 +48,18 @@
       <footer><span id="footer-sync">이 기기에 저장 중입니다.</span> 정기적으로 백업하세요.</footer>
     </main>
   </div>
-  <dialog id="editor"><form id="task-form"><div class="dialog-heading"><h2 id="form-title">새 계획</h2><button type="button" id="close" aria-label="닫기">✕</button></div>
-    <label>제목<input id="title" maxlength="150" required placeholder="어떤 계획을 세우고 싶나요?"></label>
-    <div class="form-grid"><label>구분<select id="task-category"><option value="company">회사</option><option value="personal">개인</option></select></label><label>종류<select id="kind"><option value="todo">할 일</option><option value="event">일정</option></select></label></div>
-    <div class="form-grid"><label>날짜<input id="date" type="date" required></label><label>시간 · 선택<input id="time" type="time"></label></div>
-    <div class="form-grid"><label>회사 · 선택<input id="company" maxlength="80" placeholder="예: A회사"></label><label>프로젝트 · 선택<input id="project" maxlength="80" placeholder="예: 홈페이지 개편"></label></div>
-    <label>상태<select id="status"><option value="planned">예정</option><option value="progress">진행 중</option><option value="done">완료</option></select></label>
-    <label>결과 · 메모<textarea id="notes" maxlength="5000" rows="4" placeholder="진행 내용, 결과와 다음 할 일을 남겨보세요."></textarea></label>
-    <div class="form-actions"><button type="button" class="danger" id="delete" hidden>삭제</button><button type="submit" class="primary">저장하기</button></div>
+  <dialog id="editor"><form id="task-form"><div class="dialog-heading"><div><p class="eyebrow">PLAN DETAILS</p><h2 id="form-title">새 계획</h2><p class="dialog-subtitle">할 일과 결과를 한곳에 차분히 기록하세요.</p></div><button type="button" id="close" aria-label="닫기">✕</button></div>
+    <div class="form-section"><p class="form-section-title"><span>01</span> 기본 정보</p>
+      <label>제목<input id="title" maxlength="150" required placeholder="어떤 계획을 세우고 싶나요?"></label>
+      <div class="form-grid"><label>구분<select id="task-category"><option value="company">회사</option><option value="personal">개인</option></select></label><label>종류<select id="kind"><option value="todo">할 일</option><option value="event">일정</option></select></label></div>
+      <div class="form-grid"><label>날짜<input id="date" type="date" required></label><label>시간 <small>선택</small><input id="time" type="time"></label></div>
+    </div>
+    <div class="form-section"><p class="form-section-title"><span>02</span> 분류와 기록</p>
+      <div class="form-grid"><label>회사 <small>선택</small><input id="company" maxlength="80" placeholder="예: A회사"></label><label>프로젝트 <small>선택</small><input id="project" maxlength="80" placeholder="예: 홈페이지 개편"></label></div>
+      <label>상태<select id="status"><option value="planned">예정</option><option value="progress">진행 중</option><option value="done">완료</option></select></label>
+      <label>결과 · 메모<textarea id="notes" maxlength="5000" rows="4" placeholder="진행 내용, 결과와 다음 할 일을 남겨보세요."></textarea></label>
+    </div>
+    <div class="form-actions"><button type="button" class="danger" id="delete" hidden>계획 삭제</button><button type="button" id="cancel">취소</button><button type="submit" class="primary">계획 저장</button></div>
   </form></dialog>
   <dialog id="login-dialog"><form id="login-form"><div class="dialog-heading"><div><p class="eyebrow">FREE PERSONAL SYNC</p><h2>내 계정 연결</h2></div><button type="button" id="login-close" aria-label="닫기">✕</button></div>
     <p class="login-intro">같은 이메일 계정으로 로그인하면 PC와 휴대폰의 계획이 자동으로 동기화됩니다.</p>
