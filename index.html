@@ -4,39 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#285b49">
-  <title>하루모아 · 계획과 기록</title>
+  <title>포레스트 플래너 · 계획과 기록</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <div class="app">
     <aside>
-      <a class="brand" href="./">하루모아<span>PLAN & RECORD</span></a>
-      <p class="aside-note">작은 계획을 모아<br>나의 흐름을 만들어요.</p>
+      <a class="brand" href="./"><svg class="brand-leaf" viewBox="0 0 40 48" aria-hidden="true"><path fill="currentColor" d="M33 3C8 12 2 26 10 38 27 37 37 23 33 3Z"/><path d="M8 45c3-15 9-21 20-31" stroke="#143e30" stroke-width="2" fill="none"/></svg><span>포레스트 플래너<small>일과 일상, 차분하게</small></span></a>
       <nav aria-label="화면 선택">
-        <button class="nav active" data-view="day">◷ <span>하루 계획</span></button>
-        <button class="nav" data-view="month">▦ <span>월간 달력</span></button>
-        <button class="nav" data-view="review">≡ <span>모아보기 · 리뷰</span></button>
+        <button class="nav active" data-view="dashboard"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10H6V10m3 10v-7h6v7"/></svg>대시보드</button>
+        <button class="nav" data-view="month"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/></svg>월별 계획</button>
+        <button class="nav" data-view="day"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 12 3 3 7-7"/></svg>오늘의 할 일</button>
+        <button class="nav" data-view="company"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V3h8v4M3 12h18m-11 0v3h4v-3"/></svg>회사별 업무</button>
+        <button class="nav" data-view="personal"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2Z"/></svg>개인 일정</button>
+        <button class="nav" data-view="review"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M6 17V9m6 8V3m6 14V6"/></svg>업무 리뷰</button>
       </nav>
-      <div class="storage"><strong>내 브라우저에 저장</strong><p>다른 기기로 옮기거나 데이터를 보관하려면 백업을 내려받으세요.</p><button id="export">백업 다운로드 ↓</button><label class="import">백업 가져오기<input id="import" type="file" accept="application/json,.json"></label></div>
+      <div class="storage"><div class="local-profile"><span>◉</span><div>나의 계획 공간<small>이 브라우저에 안전하게 보관</small></div></div><button id="export">↓ 백업 다운로드</button><label class="import">백업 가져오기<input id="import" type="file" accept="application/json,.json"></label></div>
     </aside>
     <main>
-      <header><div><p class="eyebrow">YOUR EVERYDAY, ORGANIZED</p><h1 id="heading">하루 계획</h1><p id="subtitle">오늘의 할 일과 약속을 한곳에서.</p></div><button class="primary" id="add">＋ 새 계획</button></header>
-      <section class="filters" aria-label="계획 필터"><label>구분<select id="category"><option value="all">전체 일정</option><option value="company">회사</option><option value="personal">개인</option></select></label><label>회사 · 프로젝트<input id="search" type="search" placeholder="예: A회사, 홈페이지"></label><button id="today">오늘로 이동</button></section>
-      <section id="day-view">
-        <div class="section-heading"><div><p class="eyebrow">DAILY PLAN</p><h2 id="day-title"></h2></div><input id="day" type="date" aria-label="계획 날짜"></div>
-        <div class="stats" id="stats"></div><div id="day-list" class="task-list"></div>
+      <header><div><h1 id="heading">오늘도, 하나씩 차분하게</h1><p id="subtitle"></p></div><div class="header-actions"><label class="search-label"><span aria-hidden="true">⌕</span><input id="search" type="search" aria-label="할 일, 일정, 회사 검색" placeholder="할 일, 일정, 회사명을 검색하세요..."></label><button class="primary" id="add">＋ 할 일 추가</button></div></header>
+      <section class="filters" aria-label="계획 필터"><label>구분<select id="category"><option value="all">전체 일정</option><option value="company">회사</option><option value="personal">개인</option></select></label><button id="today">오늘로 이동</button><button id="demo">예시 둘러보기</button><span id="demo-label" hidden>예시 모드 · 실제 기록은 변경되지 않습니다.</span></section>
+      <section id="dashboard-view">
+        <div class="stats dashboard-stats" id="dashboard-stats"></div>
+        <div class="dashboard-grid">
+          <section class="panel calendar-panel"><div class="section-heading"><h2 id="dashboard-month-title"></h2><div class="month-controls"><button id="dashboard-previous" aria-label="이전 달">‹</button><button id="dashboard-next" aria-label="다음 달">›</button></div></div><div class="calendar-week" aria-hidden="true"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div><div class="calendar" id="dashboard-calendar"></div></section>
+          <section class="panel daily-panel"><div class="section-heading"><h2 id="dashboard-day-title">오늘의 할 일</h2><button class="text-button" id="all-daily">전체 보기 ›</button></div><div id="dashboard-list" class="task-list compact"></div><button class="add-inline" id="dashboard-add">＋ 새로운 할 일</button></section>
+        </div>
+        <section class="panel company-review"><div class="section-heading"><h2>회사별 업무 리뷰</h2><div class="review-selects"><select id="dashboard-company" aria-label="리뷰할 회사"></select><input id="dashboard-review-month" type="month" aria-label="리뷰할 월"><button id="open-review">▥ 리뷰 보기</button></div></div><div class="company-review-body"><div id="company-stats" class="stats"></div><div class="review-excerpt"><p class="eyebrow">이번 달 업무 리뷰</p><p id="company-excerpt"></p><div class="next-task" id="company-next"></div></div></div></section>
       </section>
-      <section id="month-view" hidden>
-        <div class="section-heading"><div><p class="eyebrow">A MONTH AT A GLANCE</p><h2 id="month-title"></h2></div><div class="month-controls"><button id="previous" aria-label="이전 달">←</button><button id="next" aria-label="다음 달">→</button></div></div>
-        <div class="calendar-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="calendar" id="calendar"></div>
-      </section>
-      <section id="review-view" hidden>
-        <div class="section-heading"><div><p class="eyebrow">LOOK BACK, MOVE FORWARD</p><h2>기록을 모아 다음 계획으로</h2></div></div>
-        <div class="review-controls"><label>시작일<input id="review-start" type="date"></label><label>종료일<input id="review-end" type="date"></label><button id="copy-review">리뷰 복사</button></div>
-        <div id="review-summary" class="review-summary"></div><div id="review-list" class="task-list"></div>
-      </section>
-      <footer>하루모아 · 기록은 이 브라우저에만 보관됩니다. 동기화와 알림은 지원하지 않습니다.</footer>
+      <section id="day-view" class="panel" hidden><div class="section-heading"><h2 id="day-title"></h2><input id="day" type="date" aria-label="계획 날짜"></div><div class="stats" id="stats"></div><div id="day-list" class="task-list"></div></section>
+      <section id="collection-view" class="panel" hidden><div class="section-heading"><h2 id="collection-title"></h2><select id="collection-company" aria-label="회사 선택"><option value="">모든 회사</option></select></div><div id="collection-list" class="task-list"></div></section>
+      <section id="month-view" class="panel" hidden><div class="section-heading"><h2 id="month-title"></h2><div class="month-controls"><button id="previous" aria-label="이전 달">‹</button><button id="next" aria-label="다음 달">›</button></div></div><div class="calendar-week" aria-hidden="true"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div><div class="calendar" id="calendar"></div></section>
+      <section id="review-view" class="panel" hidden><div class="section-heading"><h2>기록을 모아 다음 계획으로</h2></div><div class="review-controls"><label>회사<select id="review-company"><option value="">전체 회사 · 개인</option></select></label><label>시작일<input id="review-start" type="date"></label><label>종료일<input id="review-end" type="date"></label><button id="copy-review">리뷰 복사</button></div><div id="review-summary" class="review-summary"></div><div id="review-list" class="task-list"></div></section>
+      <footer>기록은 이 브라우저에 저장됩니다. 정기적으로 백업하세요. · 기기 간 동기화와 알림은 지원하지 않습니다.</footer>
     </main>
   </div>
   <dialog id="editor"><form id="task-form"><div class="dialog-heading"><h2 id="form-title">새 계획</h2><button type="button" id="close" aria-label="닫기">✕</button></div>
